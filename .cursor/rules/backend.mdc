@@ -1,0 +1,229 @@
+---
+description: 
+globs: *.py
+---
+You are an expert in Python, Django, and scalable web application development.
+
+Key Principles
+
+- Write clear, technical responses with precise Django examples.
+- Use Django's built-in features and tools wherever possible to leverage its full capabilities.
+- Prioritize readability and maintainability; follow Django's coding style guide (PEP 8 compliance).
+- Use descriptive variable and function names; adhere to naming conventions (e.g., lowercase with underscores for functions and variables).
+- Structure your project in a modular way using Django apps to promote reusability and separation of concerns.
+- Use Django Ninja for modern, type-safe API development
+- Leverage Python type hints for automatic validation and documentation
+- Follow OpenAPI/Swagger standards for API documentation
+- Use async views where appropriate for better performance
+
+
+Django/Python
+
+- Use Django’s class-based views (CBVs) for more complex views; prefer function-based views (FBVs) for simpler logic.
+- Leverage Django’s ORM for database interactions; avoid raw SQL queries unless necessary for performance.
+- Use Django’s built-in user model and authentication framework for user management.
+- Utilize Django's form and model form classes for form handling and validation.
+- Follow the MVT (Model-View-Template) pattern strictly for clear separation of concerns.
+- Use middleware judiciously to handle cross-cutting concerns like authentication, logging, and caching.
+
+Error Handling and Validation
+
+- Implement error handling at the view level and use Django's built-in error handling mechanisms.
+- Use Django's validation framework to validate form and model data.
+- Prefer try-except blocks for handling exceptions in business logic and views.
+- Customize error pages (e.g., 404, 500) to improve user experience and provide helpful information.
+- Use Django signals to decouple error handling and logging from core business logic.
+
+Dependencies
+
+- Django
+- Django Ninja
+- Django Ninja Extra
+- Pytest
+- Factoryboy
+- Celery (for background tasks)
+- PostgreSQL (preferred databases for production)
+
+Django-Specific Guidelines
+
+- Keep business logic in models and forms; keep views light and focused on request handling.
+- Apply Django's security best practices (e.g., CSRF protection, SQL injection protection, XSS prevention).
+- Use Django’s built-in tools for testing (unittest and pytest-django) to ensure code quality and reliability.
+- Leverage Django’s caching framework to optimize performance for frequently accessed data.
+- Use Django’s middleware for common tasks such as authentication, logging, and security.
+
+Performance Optimization
+
+- Optimize query performance using Django ORM's select_related and prefetch_related for related object fetching.
+- Use Django’s cache framework with backend support (e.g., Redis or Memcached) to reduce database load.
+- Implement database indexing and query optimization techniques for better performance.
+- Use asynchronous views and background tasks (via Celery) for I/O-bound or long-running operations.
+- Optimize static file handling with Django’s static file management system (e.g., WhiteNoise or CDN integration).
+
+Key Conventions
+
+1. Follow Django's "Convention Over Configuration" principle for reducing boilerplate code.
+2. Prioritize security and performance optimization in every stage of development.
+3. Maintain a clear and logical project structure to enhance readability and maintainability.
+
+
+Django Ninja Architecture
+
+1. API Controllers:
+```python
+from ninja_extra import NinjaExtraAPI, api_controller, http_get
+
+api = NinjaExtraAPI()
+
+@api_controller('/users', tags=['Users'])
+class UserAPI:
+    @http_get('/', auth=None)
+    def list_users(self, request):
+        return User.objects.all()
+
+    @http_get('/{user_id}')
+    def get_user(self, request, user_id: int):
+        return User.objects.get(id=user_id)
+```
+
+2. Schema Definition:
+```python
+from ninja import Schema
+from typing import Optional
+
+class UserSchema(Schema):
+    id: int
+    email: str
+    first_name: Optional[str]
+    last_name: Optional[str]
+```
+
+3. Response Models:
+```python
+from typing import List
+
+@api_controller('/api/v1')
+class APIController:
+    @http_get('/users', response=List[UserSchema])
+    def get_users(self):
+        return User.objects.all()
+```
+
+Best Practices:
+
+1. **Type Safety**:
+- Use Python type hints consistently
+- Define schemas for request/response validation
+- Leverage Pydantic models for complex data structures
+
+2. **Authentication**:
+```python
+from ninja_jwt.authentication import JWTAuth
+
+@api_controller('/protected', auth=JWTAuth())
+class ProtectedAPI:
+    @http_get('/')
+    def protected_route(self, request):
+        return {"user": request.user.email}
+```
+
+3. **Async Support**:
+```python
+@api_controller('/async')
+class AsyncAPI:
+    @http_get('/data')
+    async def get_data(self, request):
+        data = await sync_to_async(fetch_data)()
+        return data
+```
+
+4. **Error Handling**:
+```python
+from ninja_extra import status
+from ninja_extra.exceptions import APIException
+
+class NotFoundError(APIException):
+    status_code = status.HTTP_404_NOT_FOUND
+    default_detail = "Resource not found"
+
+@api_controller('/items')
+class ItemAPI:
+    @http_get('/{item_id}')
+    def get_item(self, request, item_id: int):
+        try:
+            return Item.objects.get(id=item_id)
+        except Item.DoesNotExist:
+            raise NotFoundError()
+```
+
+5. **Dependency Injection**:
+```python
+from ninja_extra import Injectable
+
+@Injectable
+class UserService:
+    def get_current_user(self, request):
+        return request.user
+
+@api_controller('/profile')
+class ProfileAPI:
+    def __init__(self, user_service: UserService):
+        self.user_service = user_service
+
+    @http_get('/')
+    def get_profile(self, request):
+        user = self.user_service.get_current_user(request)
+        return user
+```
+
+Performance Optimization:
+- Use async views for I/O-bound operations
+- Leverage Django Ninja's automatic response serialization
+- Use proper caching strategies
+
+Testing:
+```python
+from ninja_extra.testing import TestClient
+
+def test_user_api():
+    client = TestClient(UserAPI)
+    response = client.get('/users')
+    assert response.status_code == 200
+```
+
+Project Structure:
+```
+myproject/
+├── api/
+│   ├── __init__.py
+│   ├── controllers/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   └── auth.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   └── user.py
+│   └── services/
+│       ├── __init__.py
+│       └── user_service.py
+└── urls.py
+```
+
+Key Differences from DRF:
+1. Uses type hints instead of serializer classes
+2. More performant due to Pydantic
+3. Built-in async support
+4. Simpler API definition
+5. Automatic OpenAPI documentation
+6. Class-based controllers with dependency injection
+
+Remember to:
+- Use type hints consistently
+- Leverage async views when appropriate
+- Structure APIs using controllers
+- Use dependency injection for services
+- Write comprehensive tests using TestClient
+- Document APIs using OpenAPI/Swagger
+
+
+
