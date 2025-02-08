@@ -4,6 +4,10 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { authApi } from '@/tanstack/features/auth';
+import {
+  setAccessToken,
+  clearAccessToken,
+} from '@/tanstack/features/client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -23,10 +27,14 @@ export function useLogin() {
     mutationFn: (credentials: { email: string; password: string }) =>
       authApi.login(credentials.email, credentials.password),
     onSuccess: (data) => {
+      const token = data.data.access;
+      if (token) {
+        setAccessToken(token);
+      }
       queryClient.invalidateQueries({ queryKey: ['user'] });
       router.push('/dashboard');
     },
-    onError: (error) => {
+    onError: () => {
       toast.error('Login failed');
     },
   });
@@ -36,13 +44,9 @@ export function useLogout() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  return useMutation({
-    mutationFn: () => authApi.logout(),
-    onSuccess: () => {
-      queryClient.clear();
-      router.push('/');
-    },
-  });
+  clearAccessToken();
+  queryClient.clear();
+  router.push('/');
 }
 
 export function useSignUp() {
@@ -57,12 +61,12 @@ export function useSignUp() {
       password: string;
       re_password: string;
     }) => authApi.register(userData),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       router.push('/dashboard');
       toast.success('Account created successfully');
     },
-    onError: (error) => {
+    onError: () => {
       toast.error('Sign up failed');
     },
   });

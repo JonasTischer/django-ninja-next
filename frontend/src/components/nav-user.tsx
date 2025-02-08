@@ -128,12 +128,8 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem
-              onClick={handleLogout}
-              disabled={logout.isPending}
-            >
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
-              {logout.isPending ? 'Logging out...' : 'Log out'}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

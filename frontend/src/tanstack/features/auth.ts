@@ -5,7 +5,7 @@ export const authApi = {
   retrieveUser: () => apiClient.get<User>('/auth/me'),
 
   login: (email: string, password: string) =>
-    apiClient.post('/auth/login', { email, password }),
+    apiClient.post('/token/pair', { email, password }),
 
   register: (userData: {
     first_name: string;
@@ -15,11 +15,11 @@ export const authApi = {
     re_password: string;
   }) => apiClient.post('/auth/register', userData),
 
-  verify: () => apiClient.post('/jwt/verify/'),
+  // verify: () => apiClient.post('/token/verify'),
 
-  refreshToken: () => apiClient.post('/auth/refresh'),
+  // refreshToken: () => apiClient.post('/token/refresh'),
 
-  logout: () => apiClient.post('/auth/logout'),
+  // logout: () => apiClient.post('/auth/logout'),
 
   activation: (uid: string, token: string) =>
     apiClient.post('/users/activation/', { uid, token }),
