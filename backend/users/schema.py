@@ -1,8 +1,9 @@
 from ninja import Schema
 from ninja.errors import ValidationError
-from ninja_jwt.schema import TokenObtainPairInputSchema
-from typing import Optional
+from ninja_jwt.schema import TokenObtainInputSchemaBase, TokenObtainPairInputSchema  # updated base class
+from typing import Optional, Type, Dict
 from pydantic import ValidationInfo, field_validator
+from ninja_jwt.tokens import RefreshToken
 
 
 class UserSchema(Schema):
@@ -25,8 +26,8 @@ class UserCreateSchema(Schema):
         return value
 
 class MyTokenObtainPairOutSchema(Schema):
-    refresh: str
     access: str
+    refresh: str
     user: UserSchema
 
 
@@ -38,3 +39,4 @@ class MyTokenObtainPairSchema(TokenObtainPairInputSchema):
 
 class TokenResponseSchema(Schema):
     detail: str
+    access: str 

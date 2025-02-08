@@ -1,80 +1,81 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { Mutex } from 'async-mutex';
-
-declare module '@tanstack/react-query' {
-  interface Register {
-    defaultError: AxiosError;
-  }
-}
-
-const mutex = new Mutex();
-
-// Access token functions now use sessionStorage
-export const setAccessToken = (token: string) => {
-  sessionStorage.setItem('accessToken', token);
-};
-
-export const clearAccessToken = () => {
-  sessionStorage.removeItem('accessToken');
-};
+import {
+  getAccessToken,
+  setAccessToken,
+  clearAccessToken,
+} from './token';
+import { authApi } from './auth';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
   headers: {
     'Content-Type': 'application/json',
   },
-  // Ensure cookies (including the refresh token cookie) are included
-  withCredentials: true,
+  withCredentials: true, // Ensures cookies are sent (for the refresh token)
 });
 
-// Request interceptor to attach the access token from sessionStorage
+// Request interceptor: attach the access token if available
 apiClient.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem('accessToken');
+    const token = getAccessToken();
+    console.log('adding token', token);
     if (token) {
       config.headers = config.headers || {};
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for token refresh
+// Create a mutex instance to avoid multiple simultaneous refresh calls
+const mutex = new Mutex();
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
+    console.log('original request', originalRequest);
+    // Skip interceptor logic if this request is for refreshing.
+    if (originalRequest.url === '/auth/refresh') {
+      return Promise.reject(error);
+    }
+    // Check if the error is a 401 response and that we haven't retried already
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
-      if (!mutex.isLocked()) {
-        const release = await mutex.acquire();
+      console.log('retrying request');
+      try {
+        // Acquire the mutex so we only refresh once if multiple requests fail
+        await mutex.acquire();
+        console.log('acquired mutex');
         try {
-          // The refresh call no longer sends the token in the body.
-          // The browser will include the HttpOnly refresh token cookie.
+          console.log('refreshing token');
           const refreshResponse = await apiClient.post(
-            '/token/refresh'
+            '/auth/refresh'
           );
-          const newAccessToken = refreshResponse.data.access;
-          setAccessToken(newAccessToken);
-          // Retry the original request with the new access token
+          console.log('refresh response', refreshResponse);
+          // Save the new access token
+          setAccessToken(refreshResponse.data.access);
+          mutex.release();
+          // Retry the original request
+          console.log('retrying request');
           return apiClient(originalRequest);
         } catch (refreshError) {
+          mutex.release();
           clearAccessToken();
-          // Optionally redirect to login on refresh failure
+          // Optionally redirect to login if refresh fails
           window.location.href = '/login';
+          console.log('refresh error', refreshError);
           return Promise.reject(refreshError);
-        } finally {
-          release();
         }
-      } else {
-        await mutex.waitForUnlock();
-        return apiClient(originalRequest);
+      } catch (mutexError) {
+        console.log('mutex error', mutexError);
+        return Promise.reject(mutexError);
       }
     }
-
+    console.log('other error', error);
     return Promise.reject(error);
   }
 );

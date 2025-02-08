@@ -1,11 +1,11 @@
 from ninja_extra import NinjaExtraAPI
 from ninja.errors import ValidationError
-from users.api import UserController
+from users.api import AuthController
 from ninja_jwt.controller import NinjaJWTDefaultController
 from ninja_jwt.authentication import JWTAuth
 
-api = NinjaExtraAPI(auth=JWTAuth())
-api.register_controllers(UserController)
+api = NinjaExtraAPI()
+api.register_controllers(AuthController)
 api.register_controllers(NinjaJWTDefaultController)
 
 

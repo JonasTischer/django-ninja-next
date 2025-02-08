@@ -1,11 +1,18 @@
 import { User } from '@/types/user';
 import apiClient from './client';
+import { setAccessToken, clearAccessToken } from './token';
 
 export const authApi = {
   retrieveUser: () => apiClient.get<User>('/auth/me'),
 
-  login: (email: string, password: string) =>
-    apiClient.post('/token/pair', { email, password }),
+  login: async (email: string, password: string) => {
+    const response = await apiClient.post('/auth/login', {
+      email,
+      password,
+    });
+    setAccessToken(response.data.access);
+    return response;
+  },
 
   register: (userData: {
     first_name: string;
@@ -17,9 +24,13 @@ export const authApi = {
 
   // verify: () => apiClient.post('/token/verify'),
 
-  // refreshToken: () => apiClient.post('/token/refresh'),
+  refreshToken: () => apiClient.post('/auth/refresh'),
 
-  // logout: () => apiClient.post('/auth/logout'),
+  logout: async () => {
+    const response = await apiClient.post('/auth/logout');
+    clearAccessToken();
+    return response;
+  },
 
   activation: (uid: string, token: string) =>
     apiClient.post('/users/activation/', { uid, token }),

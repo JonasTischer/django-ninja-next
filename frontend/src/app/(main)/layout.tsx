@@ -19,18 +19,14 @@ function AuthenticatedLayout({
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.push('/login'); // or wherever your login page is
-    }
-  }, [isLoading, user, router]);
-
   if (isLoading) {
-    return <div>Loading...</div>; // or a proper loading component
+    return <div>Loading...</div>; // Loading indicator
   }
 
+  // Render nothing if no user is present (the redirect will have occurred).
   if (!user) {
-    return null; // Render nothing if not authenticated
+    router.push('/login');
+    return null;
   }
 
   return (

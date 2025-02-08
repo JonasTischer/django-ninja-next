@@ -7,14 +7,18 @@ import { authApi } from '@/tanstack/features/auth';
 import {
   setAccessToken,
   clearAccessToken,
-} from '@/tanstack/features/client';
+} from '@/tanstack/features/token';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import axios from 'axios';
 
 export function useUser() {
   return useQuery({
     queryKey: ['user'],
-    queryFn: () => authApi.retrieveUser().then((res) => res.data),
+    queryFn: async () => {
+      const response = await authApi.retrieveUser();
+      return response.data;
+    },
     retry: false,
   });
 }
@@ -30,9 +34,9 @@ export function useLogin() {
       const token = data.data.access;
       if (token) {
         setAccessToken(token);
+        queryClient.invalidateQueries({ queryKey: ['user'] });
+        router.push('/dashboard');
       }
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-      router.push('/dashboard');
     },
     onError: () => {
       toast.error('Login failed');
@@ -44,9 +48,14 @@ export function useLogout() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  clearAccessToken();
-  queryClient.clear();
-  router.push('/');
+  return useMutation({
+    mutationFn: () => authApi.logout(),
+    onSuccess: () => {
+      clearAccessToken();
+      queryClient.clear();
+      router.push('/');
+    },
+  });
 }
 
 export function useSignUp() {
