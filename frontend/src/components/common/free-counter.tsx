@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-import { MAX_FREE_COUNTS } from "@/constants";
-
+const MAX_FREE_COUNTS = 10;
 export const FreeCounter = ({
 	isPro = false,
 	apiLimitCount = 0,
