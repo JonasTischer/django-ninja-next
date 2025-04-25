@@ -13,9 +13,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from os import getenv, path
+from urllib.parse import quote_plus
 from django.core.management.utils import get_random_secret_key
 import dotenv
 from datetime import timedelta
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -88,12 +90,43 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if DEVELOPMENT_MODE:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    # Read individual components from environment variables (injected by ECS from Secrets Manager)
+     db_name = os.getenv("DB_NAME")
+     db_user = os.getenv("DB_USER")
+     db_password = os.getenv("DB_PASSWORD")
+     db_host = os.getenv("DB_HOST")
+     db_port = os.getenv("DB_PORT")
+
+     if all([db_name, db_user, db_password, db_host, db_port]):
+          # URL-encode the password in case it contains special characters
+         encoded_password = quote_plus(db_password)
+          # Construct the DATABASE_URL string
+         database_url_string = f"postgresql://{db_user}:{encoded_password}@{db_host}:{db_port}/{db_name}"
+
+         DATABASES = {
+             "default": dj_database_url.parse(
+                 database_url_string,
+                 conn_max_age=600,
+                 # Add SSL require if needed for your RDS setup
+                 # ssl_require=True
+             )
+         }
+     else:
+         # Handle the case where environment variables are missing
+         # Option 1: Raise an error
+         # raise ImproperlyConfigured("Database configuration environment variables are incomplete.")
+         # Option 2: Fallback or default (less safe for production)
+         print("WARNING: Database environment variables not fully set. Falling back.")
+         DATABASES = {"default": {}} # Or configure a default empty/dummy DB
+
 
 
 # Password validation
