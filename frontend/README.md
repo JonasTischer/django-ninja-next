@@ -13,6 +13,8 @@ This Next.js frontend provides a modern, responsive UI with Shadcn components, i
 - Tanstack Query for state management
 - React Hook Form with Zod validation
 - Bun package manager
+- Hey-api client for API requests
+- Biome for linting and formatting
 
 ## Installation Guide 📦
 

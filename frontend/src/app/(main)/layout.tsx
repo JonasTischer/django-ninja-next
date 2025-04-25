@@ -1,53 +1,45 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { AuthProvider, useAuth } from '@/components/auth-provider';
-import {
-  SidebarInset,
-  SidebarProvider,
-} from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/app-sidebar';
-import { SiteHeader } from '@/components/site-header';
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AuthProvider } from "@/providers/auth-provider";
 
 function AuthenticatedLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
-}) {
-  const { user, isLoading } = useAuth();
-  const router = useRouter();
+	children: React.ReactNode;
+  }) {
 
-  if (isLoading) {
-    return <div>Loading...</div>; // Loading indicator
-  }
-
-  // Render nothing if no user is present (the redirect will have occurred).
-  if (!user) {
-    router.push('/login');
-    return null;
-  }
-
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {children}
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+	return (
+		<SidebarProvider>
+			<AppSidebar />
+			<SidebarInset>
+				<div className="flex flex-col h-screen overflow-hidden">
+					<div className="shrink-0">
+						<SiteHeader />
+					</div>
+					<div className="grow overflow-hidden">
+						<div className="h-full md:p-2">
+              {children}
+						</div>
+					</div>
+				</div>
+			</SidebarInset>
+		</SidebarProvider>
+	);
 }
 
 export default function MainLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
-}) {
-  return (
-    <AuthProvider>
-      <AuthenticatedLayout>{children}</AuthenticatedLayout>
-    </AuthProvider>
-  );
+	children: React.ReactNode;
+  }) {
+	return (
+		<AuthProvider>
+      <AuthenticatedLayout>
+        {children}
+        </AuthenticatedLayout>
+		</AuthProvider>
+	);
 }

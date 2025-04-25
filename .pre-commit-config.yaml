@@ -1,0 +1,30 @@
+repos:
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.6.8
+    hooks:
+      - id: uv-lock
+
+
+  - repo: local
+    hooks:
+      # Backend hooks
+      - id: ruff
+        name: ruff
+        entry: bash -c "cd backend && uv run ruff check --fix"
+        language: system
+        types: [python]
+
+      # Frontend hooks
+      - id: local-biome-check
+        name: biome check
+        entry: bash -c "cd frontend && bun run lint:fix"
+        language: system
+        types: [text]
+        files: "\\.(jsx?|tsx?|c(js|ts)|m(js|ts)|d\\.(ts|cts|mts)|jsonc?|css|svelte|vue|astro|graphql|gql)$"
+
+      - id: frontend-typecheck
+        name: frontend typecheck
+        entry: bash -c "cd frontend && bun run typecheck"
+        language: system
+        pass_filenames: false
+        types_or: [javascript, jsx, ts, tsx, json]

@@ -1,0 +1,145 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+*.log
+
+*.pot
+
+*.pyc
+
+*/*/*/__pycache__/
+
+*/*/__pycache__/
+
+*/__pycache__
+# C extensions
+*.so
+
+# Pycharm related staff
+.idea
+
+.DS_Store
+
+# Distribution / packaging
+.Python
+# activating the build prevent some css files to upload and download.
+# So I'm disabling it.
+# build/
+# activating the build prevent some css files to upload and download.
+# So I'm disabling it.
+# build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Django stuff:
+*.log
+db.sqlite
+*/migrations/__pycache__/
+*/*/migrations/__pycache__/
+*/*/*/migrations/__pycache__/
+
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Scrapy stuff:
+.scrapy
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# vscode editor
+*.vscode
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+#Linter
+
+.ruff_cache
+
+# env
+
+*.env
+.env
+
+demos/decoding_trust/dataset/
+cov.xml
+
+**.env
+
+# Ignore all .isorted files
+*.isorted
+backend/load_prompt_collections.prof
+
+.gitattributes
+
+**/*/hackaprompt.parquet
+
+site/
+
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude all .tfvars files, which are likely to contain sensitive data, such as
+# password, private keys, and other secrets. These should not be part of version
+# control as they are data points which are potentially sensitive and subject
+# to change depending on the environment.
+*.tfvars
+*.tfvars.json
+
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Include override files you do wish to add to version control using negated pattern
+# !example_override.tf
+
+# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
+# example: *tfplan*
+
+# Ignore CLI configuration files
+.terraformrc
+.terraform/
+
+.next
+staticfiles/

@@ -11,3 +11,7 @@ manage COMMAND:
 
 test ARGS="":
     cd backend && uv run pytest {{ARGS}}
+
+generate-client:
+    chmod +x scripts/generate-client.sh
+    ./scripts/generate-client.sh
