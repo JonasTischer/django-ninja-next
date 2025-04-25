@@ -10,7 +10,6 @@ import {
 } from '@/tanstack/features/token';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import axios from 'axios';
 
 export function useUser() {
   return useQuery({

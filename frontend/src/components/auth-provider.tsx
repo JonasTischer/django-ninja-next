@@ -4,7 +4,6 @@ import React, {
   createContext,
   useContext,
   ReactNode,
-  useEffect,
 } from 'react';
 import { useUser } from '../hooks/use-auth';
 import { User } from '@/types/user';

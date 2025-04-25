@@ -5,7 +5,6 @@ import {
   setAccessToken,
   clearAccessToken,
 } from './token';
-import { authApi } from './auth';
 
 const apiClient = axios.create({
   baseURL:
@@ -55,27 +54,22 @@ apiClient.interceptors.response.use(
           const refreshResponse = await apiClient.post(
             '/auth/refresh'
           );
-          console.log('refresh response', refreshResponse);
           // Save the new access token
           setAccessToken(refreshResponse.data.access);
           mutex.release();
           // Retry the original request
-          console.log('retrying request');
           return apiClient(originalRequest);
         } catch (refreshError) {
           mutex.release();
           clearAccessToken();
           // Optionally redirect to login if refresh fails
           window.location.href = '/login';
-          console.log('refresh error', refreshError);
           return Promise.reject(refreshError);
         }
       } catch (mutexError) {
-        console.log('mutex error', mutexError);
         return Promise.reject(mutexError);
       }
     }
-    console.log('other error', error);
     return Promise.reject(error);
   }
 );
