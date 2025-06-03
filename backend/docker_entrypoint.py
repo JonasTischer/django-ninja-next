@@ -27,7 +27,6 @@ def run_api(args):
     _migration()
     _create_default_admin()
     _collect_static()
-    _populate_db()
 
     app_port = os.getenv("PORT", "8000")
 
@@ -46,16 +45,6 @@ def run_api(args):
         ]
         + list(args)
     )
-
-
-@docker_run.command(
-    context_settings=dict(
-        ignore_unknown_options=True,
-    )
-)
-def populate_db():
-    """Populate the database with default data."""
-    _migration()
 
 
 def _create_default_admin():
@@ -146,12 +135,6 @@ def _collect_static():
             click.echo(f"Static files collected in {time.time() - start_time:.2f} seconds.")
     else:
         click.echo("Skipping collectstatic (not in AWS production mode).")
-
-
-def _populate_db():
-    click.echo("Populating default data.")
-    start_time = time.time()
-    click.echo(f"Default data populated in {time.time() - start_time} seconds.")
 
 
 if __name__ == "__main__":
