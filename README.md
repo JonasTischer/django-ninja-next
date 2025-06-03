@@ -102,9 +102,23 @@ cd django-ninja-next-template
 ## Roadmap
 
 - [ ] Complete deployment configuration
+  - [ ] Set up production environment
+  - [ ] Configure domain and SSL
+  - [ ] Implement logging and monitoring
 - [ ] Fully containerize with Docker and PostgreSQL
+  - [ ] Create production-ready Dockerfiles
+  - [ ] Set up Docker Compose for local development
+  - [ ] Configure PostgreSQL for scalability
 - [ ] Add comprehensive testing suite
+  - [ ] Unit tests for backend APIs
+  - [ ] Integration tests for frontend components
+  - [ ] End-to-end testing with Cypress
+  - [ ] Performance testing
 - [ ] Implement CI/CD pipeline
+  - [ ] Automated testing on pull requests
+  - [ ] Continuous deployment to staging
+  - [ ] Production deployment automation
+  - [ ] Security scanning and checks
 
 
 ## Author
