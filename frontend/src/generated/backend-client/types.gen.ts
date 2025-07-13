@@ -24,6 +24,14 @@ export type UserCreateSchema = {
     last_name: string | null;
 };
 
+/**
+ * Schema for social authentication
+ */
+export type SocialAuthSchema = {
+    credential: string;
+    provider?: string;
+};
+
 export type TokenObtainPairOutputSchema = {
     email: string;
     refresh: string;
@@ -140,6 +148,22 @@ export type MeResponses = {
 };
 
 export type MeResponse = MeResponses[keyof MeResponses];
+
+export type SocialAuthData = {
+    body: SocialAuthSchema;
+    path?: never;
+    query?: never;
+    url: '/api/auth/social';
+};
+
+export type SocialAuthResponses = {
+    /**
+     * OK
+     */
+    200: TokenResponseSchema;
+};
+
+export type SocialAuthResponse = SocialAuthResponses[keyof SocialAuthResponses];
 
 export type TokenObtainPairData = {
     body: TokenObtainPairInputSchema;

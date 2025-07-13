@@ -25,30 +25,31 @@ import {
 import { Input } from "@/components/ui/input";
 import { useSignUp } from "@/tanstack/features/auth/mutations";
 import { CheckCircle } from "lucide-react";
+import { GoogleSignInButton } from "./google-sign-in-button";
 
 const formSchema = z
 	.object({
 		email: z.string().email({
-			message: "Bitte gib eine gültige E-Mail Adresse ein.",
+			message: "Please enter a valid email address.",
 		}),
 		first_name: z.string().min(2, {
-			message: "Vorname muss mindestens 2 Zeichen lang sein.",
+			message: "First name must be at least 2 characters.",
 		}),
 		last_name: z.string().min(2, {
-			message: "Nachname muss mindestens 2 Zeichen lang sein.",
+			message: "Last name must be at least 2 characters.",
 		}),
 		password: z.string().min(8, {
-			message: "Passwort muss mindestens 8 Zeichen lang sein.",
+			message: "Password must be at least 8 characters.",
 		}),
 		re_password: z.string().min(8, {
-			message: "Passwort muss mindestens 8 Zeichen lang sein.",
+			message: "Password must be at least 8 characters.",
 		}),
 		terms: z.boolean().refine((val) => val === true, {
-			message: "Du musst den AGBs und der Datenschutzerklärung zustimmen.",
+			message: "You must agree to the Terms of Service and Privacy Policy.",
 		}),
 	})
 	.refine((data) => data.password === data.re_password, {
-		message: "Die Passwörter stimmen nicht überein.",
+		message: "Passwords do not match.",
 		path: ["re_password"],
 	});
 
@@ -91,6 +92,23 @@ export function SignUpForm() {
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
+				{/* Google Sign-In Button */}
+				<div className="mb-6">
+					<GoogleSignInButton />
+				</div>
+
+				{/* Divider */}
+				<div className="relative mb-6">
+					<div className="absolute inset-0 flex items-center">
+						<span className="w-full border-t" />
+					</div>
+					<div className="relative flex justify-center text-xs uppercase">
+						<span className="bg-background px-2 text-muted-foreground">
+							Or continue with email
+						</span>
+					</div>
+				</div>
+
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

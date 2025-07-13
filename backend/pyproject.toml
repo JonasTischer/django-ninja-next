@@ -17,6 +17,7 @@ dependencies = [
     "gunicorn>=23.0.0",
     "dj-database-url>=2.3.0",
     "whitenoise>=6.9.0",
+    "django-allauth[socialaccount]>=65.10.0",
 ]
 
 [tool.pytest.ini_options]

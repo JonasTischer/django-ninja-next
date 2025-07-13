@@ -32,6 +32,11 @@ export const zUserCreateSchema = z.object({
     ])
 });
 
+export const zSocialAuthSchema = z.object({
+    credential: z.string(),
+    provider: z.string().optional().default('google')
+});
+
 export const zTokenObtainPairOutputSchema = z.object({
     email: z.string().max(255),
     refresh: z.string(),
@@ -70,6 +75,8 @@ export const zLogoutResponse = z.void();
 export const zRegisterResponse = zUserSchema;
 
 export const zMeResponse = zUserSchema;
+
+export const zSocialAuthResponse = zTokenResponseSchema;
 
 export const zTokenObtainPairResponse = zTokenObtainPairOutputSchema;
 

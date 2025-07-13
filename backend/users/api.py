@@ -4,7 +4,9 @@ from core import settings
 from .schemas import (
     UserCreateSchema,
     UserSchema,
+    SocialAuthSchema,
 )
+from .services import SocialAuthService
 
 from ninja_extra import api_controller, route
 from django.contrib.auth import get_user_model
@@ -122,4 +124,39 @@ class AuthController(TokenObtainPairController):
     def get_user(self, request):
         """Get the current authenticated user's information"""
         return UserSchema.from_orm(request.user)
+
+    @route.post("/social", response=TokenResponseSchema, auth=None, operation_id="social_auth")
+    def social_auth(self, request, data: SocialAuthSchema):
+        """Authenticate with social providers (Google, Facebook, etc.)"""
+        try:
+            if data.provider == "google":
+                user = SocialAuthService.authenticate_with_google(data.credential, request)
+            else:
+                raise APIException(detail=f"Provider '{data.provider}' not supported", code=400)
+
+            # Generate JWT tokens
+            tokens = SocialAuthService.generate_jwt_tokens(user)
+
+            response = JsonResponse({
+                "detail": "Authentication successful",
+                "access": tokens['access'],
+            })
+
+            # Set refresh token in cookie
+            response.set_cookie(
+                key=settings.REFRESH_COOKIE,
+                value=tokens['refresh'],
+                max_age=settings.AUTH_COOKIE_MAX_AGE,
+                path=settings.AUTH_COOKIE_PATH,
+                secure=settings.AUTH_COOKIE_SECURE,
+                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+                samesite=settings.AUTH_COOKIE_SAMESITE,
+            )
+
+            return response
+
+        except APIException:
+            raise
+        except Exception as e:
+            raise APIException(detail=f"Social authentication failed: {str(e)}", code=400)
 

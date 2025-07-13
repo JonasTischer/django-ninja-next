@@ -16,13 +16,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/tanstack/features/auth/mutations";
+import { GoogleSignInButton } from "./google-sign-in-button";
 
 const formSchema = z.object({
 	email: z.string().email({
-		message: "Bitte geben Sie eine gültige E-Mail Adresse ein.",
+		message: "Please enter a valid email address.",
 	}),
 	password: z.string().min(1, {
-		message: "Passwort wird benötigt.",
+		message: "Password is required.",
 	}),
 });
 
@@ -47,11 +48,28 @@ export function LoginForm() {
 		<div className="w-full space-y-6">
 			<div className="text-center">
 				<h2 className="text-2xl font-bold tracking-tight text-foreground">
-					Willkommen zurück!
+					Welcome back!
 				</h2>
 				<p className="mt-1 text-sm text-muted-foreground">
-					Melden Sie sich mit Ihrer E-Mail Adresse an.
+					Sign in to your account to continue
 				</p>
+			</div>
+
+			{/* Google Sign-In Button */}
+			<div className="mb-6">
+				<GoogleSignInButton />
+			</div>
+
+			{/* Divider */}
+			<div className="relative mb-6">
+				<div className="absolute inset-0 flex items-center">
+					<span className="w-full border-t" />
+				</div>
+				<div className="relative flex justify-center text-xs uppercase">
+					<span className="bg-background px-2 text-muted-foreground">
+						Or continue with email
+					</span>
+				</div>
 			</div>
 
 			<Form {...form}>
@@ -61,10 +79,10 @@ export function LoginForm() {
 						name="email"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel className="text-xs font-medium text-muted-foreground">E-Mail</FormLabel>
+								<FormLabel className="text-xs font-medium text-muted-foreground">Email</FormLabel>
 								<FormControl>
 									<Input
-										placeholder="ihre@email.de"
+										placeholder="your@email.com"
 										{...field}
 										className="mt-1"
 									/>
@@ -79,16 +97,16 @@ export function LoginForm() {
 						render={({ field }) => (
 							<FormItem>
 								<div className="flex items-center justify-between">
-									<FormLabel className="text-xs font-medium text-muted-foreground">Passwort</FormLabel>
+									<FormLabel className="text-xs font-medium text-muted-foreground">Password</FormLabel>
 									<Link
 										href="/password-reset"
 										className="ml-auto inline-block text-xs text-primary hover:underline"
 									>
-										Passwort vergessen?
+										Forgot password?
 									</Link>
 								</div>
 								<FormControl>
-									<Input type="password" {...field} className="mt-1" placeholder="Ihr Passwort"/>
+									<Input type="password" {...field} className="mt-1" placeholder="Your password"/>
 								</FormControl>
 								<FormMessage className="text-xs" />
 							</FormItem>
@@ -99,18 +117,18 @@ export function LoginForm() {
 						className="w-full medical-button-gradient text-primary-foreground font-semibold tracking-wide uppercase text-sm h-11"
 						disabled={login.isPending}
 					>
-						{login.isPending ? 'Anmelden...' : 'Anmelden'}
+						{login.isPending ? 'Signing in...' : 'Sign in'}
 					</Button>
 				</form>
 			</Form>
 
 			<p className="text-center text-xs text-muted-foreground">
-				Noch kein Account?{" "}
+				Don't have an account?{" "}
 				<Link
 					href="/register"
 					className="font-medium text-primary hover:underline"
 				>
-					Registrieren
+					Sign up
 				</Link>
 			</p>
 		</div>

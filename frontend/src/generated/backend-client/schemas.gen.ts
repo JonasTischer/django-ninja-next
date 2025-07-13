@@ -96,6 +96,24 @@ export const UserCreateSchemaSchema = {
     type: 'object'
 } as const;
 
+export const SocialAuthSchemaSchema = {
+    description: 'Schema for social authentication',
+    properties: {
+        credential: {
+            title: 'Credential',
+            type: 'string'
+        },
+        provider: {
+            default: 'google',
+            title: 'Provider',
+            type: 'string'
+        }
+    },
+    required: ['credential'],
+    title: 'SocialAuthSchema',
+    type: 'object'
+} as const;
+
 export const TokenObtainPairOutputSchemaSchema = {
     properties: {
         email: {

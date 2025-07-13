@@ -2,6 +2,7 @@ import {
 	loginMutation,
 	logoutMutation,
 	registerMutation,
+	socialAuthMutation,
 } from "@/generated/backend-client/@tanstack/react-query.gen";
 import { handleApiError } from "@/utils/error-handler";
 import { clearAccessToken, setAccessToken } from "@/utils/token";
@@ -55,6 +56,22 @@ export function useSignUp() {
 		},
 		onError: (error) => {
 			handleApiError(error, "Sign up failed");
+		},
+	});
+}
+
+export function useSocialAuth() {
+	const router = useRouter();
+
+	return useMutation({
+		...socialAuthMutation(),
+		onSuccess: (data) => {
+			setAccessToken(data.access);
+			router.push("/dashboard");
+			toast.success("Successfully signed in with Google!");
+		},
+		onError: (error) => {
+			handleApiError(error, "Social login failed");
 		},
 	});
 }

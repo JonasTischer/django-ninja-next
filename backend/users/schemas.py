@@ -24,6 +24,11 @@ class UserCreateSchema(Schema):
             raise ValidationError('Passwords do not match')
         return value
 
+class SocialAuthSchema(Schema):
+    """Schema for social authentication"""
+    credential: str  # JWT credential from Google (ID token)
+    provider: str = "google"  # Default to google, can be extended for other providers
+
 class MyTokenObtainPairOutSchema(Schema):
     access: str
     refresh: str
