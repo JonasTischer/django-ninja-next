@@ -18,6 +18,7 @@ dependencies = [
     "dj-database-url>=2.3.0",
     "whitenoise>=6.9.0",
     "django-allauth[socialaccount]>=65.10.0",
+    "stripe>=12.3.0",
 ]
 
 [tool.pytest.ini_options]

@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "ninja_jwt",
     "ninja_extra",
     "users",
+    "payments",
     "corsheaders",
 ]
 
@@ -256,3 +257,8 @@ SOCIALACCOUNT_PROVIDERS = {
 # Google OAuth2 settings
 GOOGLE_OAUTH2_CLIENT_ID = getenv('GOOGLE_OAUTH2_CLIENT_ID')
 GOOGLE_OAUTH2_CLIENT_SECRET = getenv('GOOGLE_OAUTH2_CLIENT_SECRET')
+
+# Stripe settings
+STRIPE_PUBLISHABLE_KEY = getenv('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = getenv('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = getenv('STRIPE_WEBHOOK_SECRET')
