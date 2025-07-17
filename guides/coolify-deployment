@@ -1,0 +1,7 @@
+# Coolify Deployment Guide
+
+## 1. Create a new project
+## 2. Choose environment ( e.g. production )
+## 3. Create a new resource for frontend
+
+Create a new resource and choose private github app

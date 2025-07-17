@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from typing import Dict, Any
-from .models import StripeCustomer, Plan, Subscription, Payment
+from .models import StripeCustomer, Plan, Subscription
 
 User = get_user_model()
 

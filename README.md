@@ -33,6 +33,12 @@ Clone & create this repo locally with the following command:
 git clone https://github.com/JonasTischer/django-ninja-next-template.git
 cd django-ninja-next-template
 ```
+## Precommit Setup
+1. Install pre-commit hooks:
+
+   ```sh
+   pre-commit install
+   ```
 
 ### Backend Setup
 
@@ -45,15 +51,15 @@ cd django-ninja-next-template
 2. Install dependencies using uv:
 
    ```sh
-   poetry install
+   uv sync
    ```
 
 3. Copy `.env` to `.env.local` and update the variables.
 
 4. Run migrations and start the Django server:
    ```sh
-   poetry run python manage.py migrate
-   poetry run python manage.py runserver
+   just manage migrate
+   just backend-dev
    ```
 
 ### Frontend Setup

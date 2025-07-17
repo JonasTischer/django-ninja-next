@@ -2,13 +2,12 @@ import stripe
 from ninja_extra import api_controller, route
 from ninja_jwt.authentication import JWTAuth
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from ninja_extra.exceptions import APIException
 from typing import List
 
-from .models import Plan, Subscription
+from .models import Plan
 from .schemas import (
     PlanSchema,
     SubscriptionSchema,
@@ -124,7 +123,7 @@ class WebhooksController:
         # Handle the event
         try:
             if event['type'] == 'checkout.session.completed':
-                session = event['data']['object']
+                # session = event['data']['object']
                 # Handle successful payment
                 # The subscription will be created via subscription.created event
                 pass
@@ -142,12 +141,12 @@ class WebhooksController:
                 StripeService.handle_subscription_deleted(subscription)
 
             elif event['type'] == 'invoice.payment_succeeded':
-                invoice = event['data']['object']
+                # invoice = event['data']['object']
                 # Handle successful payment
                 pass
 
             elif event['type'] == 'invoice.payment_failed':
-                invoice = event['data']['object']
+                # invoice = event['data']['object']
                 # Handle failed payment
                 pass
 

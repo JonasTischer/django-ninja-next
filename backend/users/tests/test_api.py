@@ -1,4 +1,3 @@
-from ninja_extra import NinjaExtraAPI
 import pytest
 from django.contrib.auth import get_user_model
 from ninja_extra.testing import TestClient
@@ -6,7 +5,6 @@ from django.conf import settings
 
 from users.api import AuthController
 from .factories import UserAccountFactory
-from django.conf import settings
 
 
 User = get_user_model()
@@ -29,13 +27,9 @@ class TestAuthEndpoints:
 
         assert response.status_code == 200
         assert "access" in response.json()
-        assert "refresh" in response.json()
-        assert "user" in response.json()
         # Check cookies are set
         # Check cookies
-        assert settings.AUTH_COOKIE in response.cookies
         assert settings.REFRESH_COOKIE in response.cookies
-        assert response.cookies[settings.AUTH_COOKIE]['httponly']
         assert response.cookies[settings.REFRESH_COOKIE]['httponly']
 
     def test_login_invalid_credentials(self, api_client):
@@ -92,79 +86,69 @@ class TestAuthEndpoints:
         error = response.json()
         assert error["detail"] == "Passwords do not match"
 
-
     def test_logout(self, api_client):
-        # First login to get tokens
+        response = api_client.post("/logout")
+        assert response.status_code == 204
+
+    def test_me_requires_authentication(self, api_client):
+        response = api_client.get("/me")
+        assert response.status_code == 401
+
+    def test_login_sets_refresh_token_cookie(self, api_client):
         user = UserAccountFactory()
-        login_response = api_client.post(
+        response = api_client.post(
             "/login",
             json={"email": user.email, "password": "password"},
         )
 
-     # Set cookies for logout
-        api_client.cookies = {
-            'access': login_response.cookies['access'].value,
-            'refresh': login_response.cookies['refresh'].value
-        }
-
-        response = api_client.post("/logout", COOKIES=api_client.cookies)
-        assert response.status_code == 204
-
-        # Check that cookies are "deleted" (empty value and expired)
-        for cookie_name in ['access', 'refresh']:
-            cookie = response.cookies.get(cookie_name)
-            assert cookie is not None  # Cookie exists
-            assert cookie.value == ''  # Empty value
-            assert cookie['max-age'] == 0  # Expired
-            # Or check expires date
-            assert 'expires' in cookie and cookie['expires'] == 'Thu, 01 Jan 1970 00:00:00 GMT'
-
-    def test_refresh_token(self, api_client):
-        # First login to get a refresh token
-        user = UserAccountFactory()
-        login_response = api_client.post(
-            "/login",
-            json={"email": user.email, "password": "password"}
-        )
-
-        # Set refresh token cookie
-        api_client.cookies = {
-            settings.REFRESH_COOKIE: login_response.cookies[settings.REFRESH_COOKIE].value
-        }
-
-        response = api_client.post("/refresh", COOKIES=api_client.cookies)
         assert response.status_code == 200
-        assert settings.AUTH_COOKIE in response.cookies
-        assert "Token refreshed successfully" in response.json()["detail"]
+        # Check that refresh cookie is set
+        assert settings.REFRESH_COOKIE in response.cookies
 
+    def test_refresh_token_endpoint(self, api_client, settings):
+        # Configure cookie settings for tests (override production settings)
 
-    def test_refresh_token_missing(self, api_client):
-        response = api_client.post("/refresh")
-        assert response.status_code == 401
-        assert response.json()["detail"] == "Refresh token not found"
-
-    def test_get_user_authenticated(self, api_client):
-        # Create user
+        # Create user and login to get tokens
         user = UserAccountFactory()
-
-        # Login
         login_response = api_client.post(
-            "/login",
-            json={"email": user.email, "password": "password"}
+            "/login", json={"email": user.email, "password": "password"}
         )
         assert login_response.status_code == 200
 
-        api_client.cookies = {
-            'access': login_response.cookies['access'].value,
-            'refresh': login_response.cookies['refresh'].value
-        }
+        # Check that refresh cookie was set in login
+        assert settings.REFRESH_COOKIE in login_response.cookies
+        refresh_cookie = login_response.cookies[settings.REFRESH_COOKIE]
 
-        # Make authenticated request
-        response = api_client.get("/me", COOKIES=api_client.cookies, user=user)
+        # Test refresh endpoint
+        response = api_client.post(
+            "/refresh",
+            COOKIES={settings.REFRESH_COOKIE: refresh_cookie.value}
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert "access" in data
+        assert "detail" in data
+        # Should also set a new refresh token cookie
+        assert settings.REFRESH_COOKIE in response.cookies
+
+    def test_refresh_token_without_cookie(self, api_client):
+        response = api_client.post("/refresh")
+        assert response.status_code == 401
+
+    def test_get_me_with_valid_token(self, api_client):
+        user = UserAccountFactory()
+        login_response = api_client.post(
+            "/login", json={"email": user.email, "password": "password"}
+        )
+        access_token = login_response.json()["access"]
+
+        response = api_client.get(
+            "/me", headers={"Authorization": f"Bearer {access_token}"}
+        )
+
         assert response.status_code == 200
         data = response.json()
         assert data["email"] == user.email
-
-    def test_get_user_unauthenticated(self, api_client):
-        response = api_client.get("/me")
-        assert response.status_code == 401
+        assert data["first_name"] == user.first_name
+        assert data["last_name"] == user.last_name

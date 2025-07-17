@@ -1,14 +1,8 @@
 from django.contrib.auth import get_user_model
 from allauth.socialaccount.models import SocialAccount
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from allauth.socialaccount.helpers import complete_social_login
-from allauth.socialaccount import app_settings
-from django.contrib.auth import login
 from ninja_extra.exceptions import APIException
 from ninja_jwt.tokens import RefreshToken
 import requests
-import jwt
 from django.conf import settings
 
 User = get_user_model()

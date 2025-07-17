@@ -23,15 +23,23 @@ FROM python:3.12-slim-bookworm
 # It is important to use the image that matches the builder, as the path to the
 # Python executable must be the same, e.g., using `python:3.11-slim-bookworm`
 # will fail.
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+
+# Create app user
+RUN groupadd -r app && useradd -r -g app app
 
 WORKDIR /app
+
 # Copy the application from the builder
 COPY --from=builder --chown=app:app /app /app
 
+# Create directories for static and media files
+RUN mkdir -p /app/static /app/staticfiles /app/media && \
+    chown -R app:app /app/static /app/staticfiles /app/media
+
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
+
+# Switch to app user
+USER app
 
 ENTRYPOINT ["python", "/app/docker_entrypoint.py"]
