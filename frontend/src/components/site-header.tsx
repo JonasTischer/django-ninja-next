@@ -57,20 +57,20 @@ export function SiteHeader() {
 				</Breadcrumb>
 			</div>
 			<div className="flex flex-1 items-center justify-end space-x-4 pr-4">
-					<>
-						<Link href={siteConfig.links.docs} target="_blank" rel="noreferrer">
-							<div
-								className={buttonVariants({
-									size: "icon",
-									variant: "ghost",
-								})}
-							>
-								<Icons.docs className="h-5 w-5" />
-								<span className="sr-only">Docs</span>
-							</div>
-						</Link>
-						<ThemeToggle />
-					</>
+				<>
+					<Link href={siteConfig.links.docs} target="_blank" rel="noreferrer">
+						<div
+							className={buttonVariants({
+								size: "icon",
+								variant: "ghost",
+							})}
+						>
+							<Icons.docs className="h-5 w-5" />
+							<span className="sr-only">Docs</span>
+						</div>
+					</Link>
+					<ThemeToggle />
+				</>
 			</div>
 		</header>
 	);

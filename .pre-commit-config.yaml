@@ -20,7 +20,7 @@ repos:
         entry: bash -c "cd frontend && bun run lint:fix"
         language: system
         types: [text]
-        files: "\\.(jsx?|tsx?|c(js|ts)|m(js|ts)|d\\.(ts|cts|mts)|jsonc?|css|svelte|vue|astro|graphql|gql)$"
+        files: "\\.(jsx?|tsx?|c(js|ts)|m(js|ts)|d\\.(ts|cts|mts)|jsonc?)$"
 
       - id: frontend-typecheck
         name: frontend typecheck

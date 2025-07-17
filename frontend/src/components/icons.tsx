@@ -31,8 +31,8 @@ export type Icon = typeof LucideIcon;
 
 export const Icons = {
 	logo: Command,
-  close: X,
-  docs: Book,
+	close: X,
+	docs: Book,
 	spinner: Loader2,
 	chevronLeft: ChevronLeft,
 	chevronRight: ChevronRight,

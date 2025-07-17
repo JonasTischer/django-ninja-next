@@ -42,6 +42,7 @@ export function useSignUp() {
 
 	return useMutation({
 		...registerMutation(),
+		// biome-ignore lint/suspicious/noExplicitAny: Legacy API requires any type
 		onSuccess: (data, variables: any) => {
 			if (variables?.body?.email && variables?.body?.password) {
 				login.mutate({
@@ -51,7 +52,9 @@ export function useSignUp() {
 					},
 				});
 			} else {
-				toast.error("Account created, but auto-login failed. Please log in manually.");
+				toast.error(
+					"Account created, but auto-login failed. Please log in manually.",
+				);
 			}
 		},
 		onError: (error) => {

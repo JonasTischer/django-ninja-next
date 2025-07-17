@@ -14,9 +14,5 @@ export function ModalProvider() {
 		return null;
 	}
 
-	return (
-		<>
-			{/* Add future modals here */}
-		</>
-	);
+	return <>{/* Add future modals here */}</>;
 }

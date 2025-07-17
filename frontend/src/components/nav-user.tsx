@@ -34,13 +34,13 @@ export function NavUser({
 		first_name: string;
 		last_name: string;
 		email: string;
-
 	};
-  }) {
-  const avatar_url = "https://github.com/shadcn.png";
-  const account_type = "Premium Account";
-  const { isMobile } = useSidebar();
-  const userInitials = `${user?.first_name?.[0] ?? ''}${user?.last_name?.[0] ?? ''}`.toUpperCase();
+}) {
+	const avatar_url = "https://github.com/shadcn.png";
+	const account_type = "Premium Account";
+	const { isMobile } = useSidebar();
+	const userInitials =
+		`${user?.first_name?.[0] ?? ""}${user?.last_name?.[0] ?? ""}`.toUpperCase();
 
 	const logout = useLogout();
 
@@ -49,28 +49,30 @@ export function NavUser({
 			<SidebarMenuItem>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<SidebarMenuButton
-							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-						>
-            <div className="rounded-lg bg-accent/50 flex items-center gap-3">
-              <Avatar className="h-10 w-10 border">
-                {/* Add actual image source if available */}
-                <AvatarImage src={avatar_url} alt={user?.first_name ?? "User"} />
-                <AvatarFallback className="bg-gradient-to-br from-medical-teal to-medical-blue text-white font-medium">
-                  {userInitials || "???"} {/* Fallback initials */}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm font-semibold text-foreground">
-                  {user?.first_name && user?.last_name
-                    ? `${user.first_name} ${user.last_name}`
-                    : "Loading..."}{" "}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {account_type || "Premium Account"} {/* Example dynamic field */}
-                </p>
-              </div>
-            </div>
+						<SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+							<div className="rounded-lg bg-accent/50 flex items-center gap-3">
+								<Avatar className="h-10 w-10 border">
+									{/* Add actual image source if available */}
+									<AvatarImage
+										src={avatar_url}
+										alt={user?.first_name ?? "User"}
+									/>
+									<AvatarFallback className="bg-gradient-to-br from-medical-teal to-medical-blue text-white font-medium">
+										{userInitials || "???"} {/* Fallback initials */}
+									</AvatarFallback>
+								</Avatar>
+								<div>
+									<p className="text-sm font-semibold text-foreground">
+										{user?.first_name && user?.last_name
+											? `${user.first_name} ${user.last_name}`
+											: "Loading..."}{" "}
+									</p>
+									<p className="text-xs text-muted-foreground">
+										{account_type || "Premium Account"}{" "}
+										{/* Example dynamic field */}
+									</p>
+								</div>
+							</div>
 							<ChevronsUpDown className="ml-auto size-4" />
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
@@ -82,13 +84,16 @@ export function NavUser({
 					>
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar className="h-10 w-10 border">
-                {/* Add actual image source if available */}
-                <AvatarImage src={avatar_url} alt={user?.first_name ?? "User"} />
-                <AvatarFallback className="bg-gradient-to-br from-medical-teal to-medical-blue text-white font-medium">
-                  {userInitials || "???"} {/* Fallback initials */}
-                </AvatarFallback>
-              </Avatar>
+								<Avatar className="h-10 w-10 border">
+									{/* Add actual image source if available */}
+									<AvatarImage
+										src={avatar_url}
+										alt={user?.first_name ?? "User"}
+									/>
+									<AvatarFallback className="bg-gradient-to-br from-medical-teal to-medical-blue text-white font-medium">
+										{userInitials || "???"} {/* Fallback initials */}
+									</AvatarFallback>
+								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
 									<span className="truncate font-semibold">
 										{user.first_name} {user.last_name}

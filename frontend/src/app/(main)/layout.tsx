@@ -9,8 +9,7 @@ function AuthenticatedLayout({
 	children,
 }: {
 	children: React.ReactNode;
-  }) {
-
+}) {
 	return (
 		<SidebarProvider>
 			<AppSidebar />
@@ -20,9 +19,7 @@ function AuthenticatedLayout({
 						<SiteHeader />
 					</div>
 					<div className="grow overflow-hidden">
-						<div className="h-full md:p-2">
-              {children}
-						</div>
+						<div className="h-full md:p-2">{children}</div>
 					</div>
 				</div>
 			</SidebarInset>
@@ -34,12 +31,10 @@ export default function MainLayout({
 	children,
 }: {
 	children: React.ReactNode;
-  }) {
+}) {
 	return (
 		<AuthProvider>
-      <AuthenticatedLayout>
-        {children}
-        </AuthenticatedLayout>
+			<AuthenticatedLayout>{children}</AuthenticatedLayout>
 		</AuthProvider>
 	);
 }

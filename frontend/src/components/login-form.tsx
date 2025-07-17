@@ -79,7 +79,9 @@ export function LoginForm() {
 						name="email"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel className="text-xs font-medium text-muted-foreground">Email</FormLabel>
+								<FormLabel className="text-xs font-medium text-muted-foreground">
+									Email
+								</FormLabel>
 								<FormControl>
 									<Input
 										placeholder="your@email.com"
@@ -97,7 +99,9 @@ export function LoginForm() {
 						render={({ field }) => (
 							<FormItem>
 								<div className="flex items-center justify-between">
-									<FormLabel className="text-xs font-medium text-muted-foreground">Password</FormLabel>
+									<FormLabel className="text-xs font-medium text-muted-foreground">
+										Password
+									</FormLabel>
 									<Link
 										href="/password-reset"
 										className="ml-auto inline-block text-xs text-primary hover:underline"
@@ -106,7 +110,12 @@ export function LoginForm() {
 									</Link>
 								</div>
 								<FormControl>
-									<Input type="password" {...field} className="mt-1" placeholder="Your password"/>
+									<Input
+										type="password"
+										{...field}
+										className="mt-1"
+										placeholder="Your password"
+									/>
 								</FormControl>
 								<FormMessage className="text-xs" />
 							</FormItem>
@@ -117,7 +126,7 @@ export function LoginForm() {
 						className="w-full medical-button-gradient text-primary-foreground font-semibold tracking-wide uppercase text-sm h-11"
 						disabled={login.isPending}
 					>
-						{login.isPending ? 'Signing in...' : 'Sign in'}
+						{login.isPending ? "Signing in..." : "Sign in"}
 					</Button>
 				</form>
 			</Form>

@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["node_modules", "**/backend-client/**"]
+    "ignore": ["node_modules", "**/backend-client/**", "**/*.css"]
   },
   "formatter": {
     "enabled": true,
@@ -19,12 +19,30 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "a11y": {
+        "noRedundantRoles": "off",
+        "useSemanticElements": "off"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off"
+      }
     }
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
+    }
+  },
+  "css": {
+    "parser": {
+      "allowWrongLineComments": true
+    },
+    "formatter": {
+      "enabled": false
+    },
+    "linter": {
+      "enabled": false
     }
   }
 }

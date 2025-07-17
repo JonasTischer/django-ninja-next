@@ -9,14 +9,7 @@ interface LogoProps {
 }
 
 const Logo: React.FC<LogoProps> = ({ width = 50, height = 50 }) => {
-	return (
-		<Image
-			src={AppLogo}
-			alt="App Logo"
-			width={width}
-			height={height}
-		/>
-	);
+	return <Image src={AppLogo} alt="App Logo" width={width} height={height} />;
 };
 
 export default Logo;

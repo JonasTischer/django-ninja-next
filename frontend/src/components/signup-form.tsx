@@ -78,8 +78,7 @@ export function SignUpForm() {
 				last_name: values.last_name,
 			},
 		});
-  }
-
+	}
 
 	return (
 		<Card className="w-full max-w-lg">
