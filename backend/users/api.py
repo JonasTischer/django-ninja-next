@@ -1,46 +1,44 @@
-from ninja_jwt.authentication import JWTAuth
-
-from core import settings
-from .schemas import (
-    UserCreateSchema,
-    UserSchema,
-    SocialAuthSchema,
-)
-from .services import SocialAuthService
-
-from ninja_extra import api_controller, route
 from django.contrib.auth import get_user_model
 from django.db import transaction
-
-
+from django.http import HttpResponse, JsonResponse
+from ninja_extra import api_controller, route
+from ninja_extra.exceptions import APIException
+from ninja_jwt.authentication import JWTAuth
 from ninja_jwt.controller import TokenObtainPairController
 from ninja_jwt.tokens import RefreshToken
-from django.http import HttpResponse, JsonResponse
+
+from core import settings
 
 from .schemas import (
     MyTokenObtainPairSchema,
-    TokenResponseSchema
+    SocialAuthSchema,
+    TokenResponseSchema,
+    UserCreateSchema,
+    UserSchema,
 )
-
-from ninja_extra.exceptions import APIException
+from .services import SocialAuthService
 
 User = get_user_model()
 
-@api_controller('/auth', tags=['Auth'])
-class AuthController(TokenObtainPairController):
-    @route.post("/login",
-                response=TokenResponseSchema,
-                url_name="login",
-                auth=None,
-                operation_id="login")
-    def obtain_token(self, user_token: MyTokenObtainPairSchema):
 
+@api_controller("/auth", tags=["Auth"])
+class AuthController(TokenObtainPairController):
+    @route.post(
+        "/login",
+        response=TokenResponseSchema,
+        url_name="login",
+        auth=None,
+        operation_id="login",
+    )
+    def obtain_token(self, user_token: MyTokenObtainPairSchema):
         token_data = user_token.output_schema()
 
-        response = JsonResponse({
-            "detail": "Token refreshed successfully",
-            "access": token_data.access,
-        })
+        response = JsonResponse(
+            {
+                "detail": "Token refreshed successfully",
+                "access": token_data.access,
+            }
+        )
         # Set cookies refresh token in HttpOnly cookie
         response.set_cookie(
             key=settings.REFRESH_COOKIE,
@@ -54,10 +52,12 @@ class AuthController(TokenObtainPairController):
 
         return response
 
-    @route.post("/refresh",
-                response={200: TokenResponseSchema, 401: TokenResponseSchema},
-                auth=None,
-                operation_id="refresh")
+    @route.post(
+        "/refresh",
+        response={200: TokenResponseSchema, 401: TokenResponseSchema},
+        auth=None,
+        operation_id="refresh",
+    )
     def refresh_token(self, request):
         """Refresh access token using refresh token from cookie"""
         try:
@@ -70,10 +70,9 @@ class AuthController(TokenObtainPairController):
             # Generate new access token
             access_token = str(refresh_token.access_token)
 
-            response = JsonResponse({
-                "detail": "Token refreshed successfully",
-                "access": access_token
-            })
+            response = JsonResponse(
+                {"detail": "Token refreshed successfully", "access": access_token}
+            )
 
             # Set cookies refresh token in HttpOnly cookie
             response.set_cookie(
@@ -99,7 +98,7 @@ class AuthController(TokenObtainPairController):
         response.delete_cookie(
             key=settings.REFRESH_COOKIE,
             path=settings.AUTH_COOKIE_PATH,
-            samesite=settings.AUTH_COOKIE_SAMESITE
+            samesite=settings.AUTH_COOKIE_SAMESITE,
         )
 
         return response
@@ -115,7 +114,7 @@ class AuthController(TokenObtainPairController):
             password=data.password,
             first_name=data.first_name,
             last_name=data.last_name,
-            is_active=True  # Set to false if we want to require activation
+            is_active=True,  # Set to false if we want to require activation
         )
 
         return user
@@ -125,27 +124,35 @@ class AuthController(TokenObtainPairController):
         """Get the current authenticated user's information"""
         return UserSchema.from_orm(request.user)
 
-    @route.post("/social", response=TokenResponseSchema, auth=None, operation_id="social_auth")
+    @route.post(
+        "/social", response=TokenResponseSchema, auth=None, operation_id="social_auth"
+    )
     def social_auth(self, request, data: SocialAuthSchema):
         """Authenticate with social providers (Google, Facebook, etc.)"""
         try:
             if data.provider == "google":
-                user = SocialAuthService.authenticate_with_google(data.credential, request)
+                user = SocialAuthService.authenticate_with_google(
+                    data.credential, request
+                )
             else:
-                raise APIException(detail=f"Provider '{data.provider}' not supported", code=400)
+                raise APIException(
+                    detail=f"Provider '{data.provider}' not supported", code=400
+                )
 
             # Generate JWT tokens
             tokens = SocialAuthService.generate_jwt_tokens(user)
 
-            response = JsonResponse({
-                "detail": "Authentication successful",
-                "access": tokens['access'],
-            })
+            response = JsonResponse(
+                {
+                    "detail": "Authentication successful",
+                    "access": tokens["access"],
+                }
+            )
 
             # Set refresh token in cookie
             response.set_cookie(
                 key=settings.REFRESH_COOKIE,
-                value=tokens['refresh'],
+                value=tokens["refresh"],
                 max_age=settings.AUTH_COOKIE_MAX_AGE,
                 path=settings.AUTH_COOKIE_PATH,
                 secure=settings.AUTH_COOKIE_SECURE,
@@ -158,5 +165,6 @@ class AuthController(TokenObtainPairController):
         except APIException:
             raise
         except Exception as e:
-            raise APIException(detail=f"Social authentication failed: {str(e)}", code=400)
-
+            raise APIException(
+                detail=f"Social authentication failed: {str(e)}", code=400
+            ) from e

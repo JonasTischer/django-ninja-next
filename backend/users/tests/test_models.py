@@ -1,6 +1,7 @@
 # test_models.py
 import pytest
 from django.contrib.auth import get_user_model
+
 from .factories import UserAccountFactory
 
 User = get_user_model()

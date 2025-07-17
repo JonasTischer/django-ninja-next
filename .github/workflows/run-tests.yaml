@@ -1,35 +1,67 @@
-name: test
+name: CI
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
-  backend-tests:
+  backend-checks:
+    name: Backend (Format, Lint, Test)
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend  # Set the working directory for the entire job
+        working-directory: backend
 
     steps:
-      #----------------------------------------------
-      #       check-out repo and set-up python
-      #----------------------------------------------
       - name: Check out repository
-        uses: actions/checkout@v3
-      - name: Set up python
-        id: setup-python
-        uses: actions/setup-python@v4
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      #----------------------------------------------
-      #  -----  install & configure uv  -----
-      #----------------------------------------------
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
         with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Check formatting with ruff
+        run: uv run ruff format --check .
+
+      - name: Lint with ruff
+        run: uv run ruff check .
+
+      - name: Run tests
+        run: uv run pytest
+
+  frontend-checks:
+    name: Frontend (Format, Lint)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Check formatting with biome
+        run: bun run biome format ./src
+
+      - name: Lint with biome
+        run: bun run biome lint ./src
+
+      - name: Type check
+        run: bun run typecheck
 

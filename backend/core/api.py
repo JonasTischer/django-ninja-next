@@ -1,8 +1,9 @@
-from ninja_extra import NinjaExtraAPI
 from ninja.errors import ValidationError
-from users.api import AuthController
-from payments.api import PaymentsController, WebhooksController
+from ninja_extra import NinjaExtraAPI
 from ninja_jwt.controller import NinjaJWTDefaultController
+
+from payments.api import PaymentsController, WebhooksController
+from users.api import AuthController
 
 api = NinjaExtraAPI()
 api.register_controllers(AuthController)

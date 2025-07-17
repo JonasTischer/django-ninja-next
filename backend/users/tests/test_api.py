@@ -1,13 +1,14 @@
 import pytest
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from ninja_extra.testing import TestClient
-from django.conf import settings
 
 from users.api import AuthController
+
 from .factories import UserAccountFactory
 
-
 User = get_user_model()
+
 
 @pytest.fixture
 def api_client():
@@ -21,8 +22,7 @@ class TestAuthEndpoints:
         user = UserAccountFactory()
         # Attempt login
         response = api_client.post(
-            "/login",
-            json={"email": user.email, "password": "password"}
+            "/login", json={"email": user.email, "password": "password"}
         )
 
         assert response.status_code == 200
@@ -30,12 +30,11 @@ class TestAuthEndpoints:
         # Check cookies are set
         # Check cookies
         assert settings.REFRESH_COOKIE in response.cookies
-        assert response.cookies[settings.REFRESH_COOKIE]['httponly']
+        assert response.cookies[settings.REFRESH_COOKIE]["httponly"]
 
     def test_login_invalid_credentials(self, api_client):
         response = api_client.post(
-            "/login",
-            json={"email": "wrong@email.com", "password": "wrongpass"}
+            "/login", json={"email": "wrong@email.com", "password": "wrongpass"}
         )
         assert response.status_code == 401
 
@@ -45,7 +44,7 @@ class TestAuthEndpoints:
             "password": "StrongPass123!",
             "re_password": "StrongPass123!",
             "first_name": "Test",
-            "last_name": "User"
+            "last_name": "User",
         }
 
         response = api_client.post("/register", json=user_data)
@@ -65,7 +64,7 @@ class TestAuthEndpoints:
             "password": "StrongPass123!",
             "re_password": "StrongPass123!",
             "first_name": "Test",
-            "last_name": "User"
+            "last_name": "User",
         }
 
         response = api_client.post("/register", json=user_data)
@@ -78,7 +77,7 @@ class TestAuthEndpoints:
             "password": "StrongPass123!",
             "re_password": "DifferentPass123!",
             "first_name": "Test",
-            "last_name": "User"
+            "last_name": "User",
         }
 
         response = api_client.post("/register", json=user_data)
@@ -121,8 +120,7 @@ class TestAuthEndpoints:
 
         # Test refresh endpoint
         response = api_client.post(
-            "/refresh",
-            COOKIES={settings.REFRESH_COOKIE: refresh_cookie.value}
+            "/refresh", COOKIES={settings.REFRESH_COOKIE: refresh_cookie.value}
         )
 
         assert response.status_code == 200

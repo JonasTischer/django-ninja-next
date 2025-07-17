@@ -1,7 +1,6 @@
 from ninja import Schema
 from ninja.errors import ValidationError
 from ninja_jwt.schema import TokenObtainPairInputSchema  # updated base class
-from typing import Optional
 from pydantic import ValidationInfo, field_validator
 
 
@@ -10,24 +9,28 @@ class UserSchema(Schema):
     last_name: str
     email: str
 
+
 class UserCreateSchema(Schema):
     email: str
     password: str
     re_password: str
-    first_name: Optional[str]
-    last_name: Optional[str]
+    first_name: str | None
+    last_name: str | None
 
-    @field_validator('re_password', mode='after')
+    @field_validator("re_password", mode="after")
     @classmethod
     def check_passwords_match(cls, value: str, info: ValidationInfo) -> str:
-        if value != info.data['password']:
-            raise ValidationError('Passwords do not match')
+        if value != info.data["password"]:
+            raise ValidationError("Passwords do not match")
         return value
+
 
 class SocialAuthSchema(Schema):
     """Schema for social authentication"""
+
     credential: str  # JWT credential from Google (ID token)
     provider: str = "google"  # Default to google, can be extended for other providers
+
 
 class MyTokenObtainPairOutSchema(Schema):
     access: str
@@ -40,6 +43,7 @@ class MyTokenObtainPairSchema(TokenObtainPairInputSchema):
         out_dict = self.get_response_schema_init_kwargs()
         out_dict.update(user=UserSchema.from_orm(self._user))
         return MyTokenObtainPairOutSchema(**out_dict)
+
 
 class TokenResponseSchema(Schema):
     detail: str
