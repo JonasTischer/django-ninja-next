@@ -16,6 +16,9 @@ jobs:
     name: Pre-commit Checks
     runs-on: ubuntu-latest
 
+    env:
+      DEVELOPMENT_MODE: "True"
+
     steps:
       - uses: actions/checkout@v4
 
