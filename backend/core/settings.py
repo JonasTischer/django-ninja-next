@@ -192,7 +192,9 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Add the domain from which you are accessing the admin panel
 # Ensure you include the scheme (https://)
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
+).split(",")
 
 # Django Sites Framework (required for allauth)
 SITE_ID = 1
