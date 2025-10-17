@@ -6,9 +6,6 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import clsx from "clsx";
 
 import { Container } from "@/components/layout/Container";
-import screenshotContacts from "./images/screenshots/contacts.png";
-import screenshotInventory from "./images/screenshots/inventory.png";
-import screenshotProfitLoss from "./images/screenshots/profit-loss.png";
 
 interface Feature {
 	name: React.ReactNode;
@@ -24,7 +21,7 @@ const features: Array<Feature> = [
 		summary: "Stay on top of things with always up-to-date reporting features.",
 		description:
 			"We talked about reporting in the section above but we needed three items here, so mentioning it one more time for posterity.",
-		image: screenshotProfitLoss,
+		image: "/images/screenshots/profit-loss.png",
 		icon: function ReportingIcon() {
 			const id = useId();
 			return (
@@ -59,7 +56,7 @@ const features: Array<Feature> = [
 			"Never lose track of what’s in stock with accurate inventory tracking.",
 		description:
 			"We don’t offer this as part of our software but that statement is inarguably true. Accurate inventory tracking would help you for sure.",
-		image: screenshotInventory,
+		image: "/images/screenshots/inventory.png",
 		icon: function InventoryIcon() {
 			return (
 				<>
@@ -87,7 +84,7 @@ const features: Array<Feature> = [
 			"Organize all of your contacts, service providers, and invoices in one place.",
 		description:
 			"This also isn’t actually a feature, it’s just some friendly advice. We definitely recommend that you do this, you’ll feel really organized and professional.",
-		image: screenshotContacts,
+		image: "/images/screenshots/contacts.png",
 		icon: function ContactsIcon() {
 			return (
 				<>
