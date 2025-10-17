@@ -3,6 +3,10 @@ BACKEND_DIR := "backend"
 FRONTEND_DIR := "frontend"
 FRONTEND_PACKAGE_MANAGER := "bun"
 
+help:
+    @echo "Available commands:"
+    @just --list
+
 setup:
     cd {{BACKEND_DIR}} && uv sync --all-extras --dev
     cd {{FRONTEND_DIR}} && {{FRONTEND_PACKAGE_MANAGER}} install
