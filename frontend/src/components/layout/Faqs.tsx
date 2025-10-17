@@ -1,7 +1,6 @@
 import Image from "next/image";
 
 import { Container } from "@/components/layout/Container";
-import backgroundImage from "@/images/background-faqs.jpg";
 
 const faqs = [
 	[
@@ -66,7 +65,7 @@ export function Faqs() {
 		>
 			<Image
 				className="absolute top-0 left-1/2 max-w-none translate-x-[-30%] -translate-y-1/4"
-				src={backgroundImage}
+				src="/images/background-faqs.jpg"
 				alt=""
 				width={1558}
 				height={946}

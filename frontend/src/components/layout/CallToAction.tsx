@@ -2,7 +2,6 @@ import Image from "next/image";
 
 import { Button } from "@/components/layout/Button";
 import { Container } from "@/components/layout/Container";
-import backgroundImage from "@/images/background-call-to-action.jpg";
 
 export function CallToAction() {
 	return (
@@ -12,7 +11,7 @@ export function CallToAction() {
 		>
 			<Image
 				className="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2"
-				src={backgroundImage}
+				src="/images/background-call-to-action.jpg"
 				alt=""
 				width={2347}
 				height={1244}
