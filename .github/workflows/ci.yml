@@ -45,6 +45,9 @@ jobs:
         working-directory: ./frontend
         run: bun install
 
+      - name: Setup Just
+        uses: extractions/setup-just@v3
+
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
 
