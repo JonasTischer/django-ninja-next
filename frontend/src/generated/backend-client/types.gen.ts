@@ -32,6 +32,59 @@ export type SocialAuthSchema = {
     provider?: string;
 };
 
+export type PlanSchema = {
+    id: number;
+    name: string;
+    price: number | string;
+    currency: string;
+    description: string;
+    features: Array<string>;
+    is_active: boolean;
+};
+
+export type SubscriptionSchema = {
+    id: number;
+    plan: PlanSchema;
+    status: string;
+    current_period_start: string;
+    current_period_end: string;
+    cancel_at_period_end: boolean;
+};
+
+export type UserSubscriptionSchema = {
+    has_active_subscription: boolean;
+    subscription?: SubscriptionSchema | null;
+    plan_name?: string | null;
+};
+
+export type CheckoutSessionResponseSchema = {
+    session_id: string;
+    session_url: string;
+};
+
+export type CreateCheckoutSessionSchema = {
+    plan_id: number;
+    success_url: string;
+    cancel_url: string;
+};
+
+export type CancelSubscriptionResponseSchema = {
+    success: boolean;
+    message: string;
+};
+
+export type CancelSubscriptionSchema = {
+    subscription_id: string;
+};
+
+export type CustomerPortalResponseSchema = {
+    session_url: string;
+};
+
+export type CustomerPortalSchema = {
+    return_url: string;
+};
+
 export type TokenObtainPairOutputSchema = {
     email: string;
     refresh: string;
@@ -164,6 +217,100 @@ export type SocialAuthResponses = {
 };
 
 export type SocialAuthResponse = SocialAuthResponses[keyof SocialAuthResponses];
+
+export type GetPlansData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/payments/plans';
+};
+
+export type GetPlansResponses = {
+    /**
+     * OK
+     */
+    200: Array<PlanSchema>;
+};
+
+export type GetPlansResponse = GetPlansResponses[keyof GetPlansResponses];
+
+export type GetUserSubscriptionData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/payments/subscription';
+};
+
+export type GetUserSubscriptionResponses = {
+    /**
+     * OK
+     */
+    200: UserSubscriptionSchema;
+};
+
+export type GetUserSubscriptionResponse = GetUserSubscriptionResponses[keyof GetUserSubscriptionResponses];
+
+export type CreateCheckoutSessionData = {
+    body: CreateCheckoutSessionSchema;
+    path?: never;
+    query?: never;
+    url: '/api/payments/checkout';
+};
+
+export type CreateCheckoutSessionResponses = {
+    /**
+     * OK
+     */
+    200: CheckoutSessionResponseSchema;
+};
+
+export type CreateCheckoutSessionResponse = CreateCheckoutSessionResponses[keyof CreateCheckoutSessionResponses];
+
+export type CancelSubscriptionData = {
+    body: CancelSubscriptionSchema;
+    path?: never;
+    query?: never;
+    url: '/api/payments/cancel';
+};
+
+export type CancelSubscriptionResponses = {
+    /**
+     * OK
+     */
+    200: CancelSubscriptionResponseSchema;
+};
+
+export type CancelSubscriptionResponse = CancelSubscriptionResponses[keyof CancelSubscriptionResponses];
+
+export type CreateCustomerPortalData = {
+    body: CustomerPortalSchema;
+    path?: never;
+    query?: never;
+    url: '/api/payments/portal';
+};
+
+export type CreateCustomerPortalResponses = {
+    /**
+     * OK
+     */
+    200: CustomerPortalResponseSchema;
+};
+
+export type CreateCustomerPortalResponse = CreateCustomerPortalResponses[keyof CreateCustomerPortalResponses];
+
+export type StripeWebhookData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/payments/webhooks/stripe';
+};
+
+export type StripeWebhookResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
 
 export type TokenObtainPairData = {
     body: TokenObtainPairInputSchema;

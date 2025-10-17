@@ -23,5 +23,3 @@ cd ..
 mv openapi.json frontend/
 cd frontend
 bun run openapi-ts
-echo "Formatting generated client in $(pwd)"
-bunx @biomejs/biome format --write ./src/generated

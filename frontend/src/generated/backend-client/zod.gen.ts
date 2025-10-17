@@ -37,6 +37,68 @@ export const zSocialAuthSchema = z.object({
     provider: z.string().optional().default('google')
 });
 
+export const zPlanSchema = z.object({
+    id: z.number().int(),
+    name: z.string(),
+    price: z.union([
+        z.number(),
+        z.string()
+    ]),
+    currency: z.string(),
+    description: z.string(),
+    features: z.array(z.string()),
+    is_active: z.boolean()
+});
+
+export const zSubscriptionSchema = z.object({
+    id: z.number().int(),
+    plan: zPlanSchema,
+    status: z.string(),
+    current_period_start: z.string().datetime(),
+    current_period_end: z.string().datetime(),
+    cancel_at_period_end: z.boolean()
+});
+
+export const zUserSubscriptionSchema = z.object({
+    has_active_subscription: z.boolean(),
+    subscription: z.union([
+        zSubscriptionSchema,
+        z.null()
+    ]).optional(),
+    plan_name: z.union([
+        z.string(),
+        z.null()
+    ]).optional()
+});
+
+export const zCheckoutSessionResponseSchema = z.object({
+    session_id: z.string(),
+    session_url: z.string()
+});
+
+export const zCreateCheckoutSessionSchema = z.object({
+    plan_id: z.number().int(),
+    success_url: z.string(),
+    cancel_url: z.string()
+});
+
+export const zCancelSubscriptionResponseSchema = z.object({
+    success: z.boolean(),
+    message: z.string()
+});
+
+export const zCancelSubscriptionSchema = z.object({
+    subscription_id: z.string()
+});
+
+export const zCustomerPortalResponseSchema = z.object({
+    session_url: z.string()
+});
+
+export const zCustomerPortalSchema = z.object({
+    return_url: z.string()
+});
+
 export const zTokenObtainPairOutputSchema = z.object({
     email: z.string().max(255),
     refresh: z.string(),
@@ -77,6 +139,16 @@ export const zRegisterResponse = zUserSchema;
 export const zMeResponse = zUserSchema;
 
 export const zSocialAuthResponse = zTokenResponseSchema;
+
+export const zGetPlansResponse = z.array(zPlanSchema);
+
+export const zGetUserSubscriptionResponse = zUserSubscriptionSchema;
+
+export const zCreateCheckoutSessionResponse = zCheckoutSessionResponseSchema;
+
+export const zCancelSubscriptionResponse = zCancelSubscriptionResponseSchema;
+
+export const zCreateCustomerPortalResponse = zCustomerPortalResponseSchema;
 
 export const zTokenObtainPairResponse = zTokenObtainPairOutputSchema;
 

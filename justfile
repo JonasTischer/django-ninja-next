@@ -1,27 +1,39 @@
+# Variables
+BACKEND_DIR := "backend"
+FRONTEND_DIR := "frontend"
+FRONTEND_PACKAGE_MANAGER := "bun"
+
+setup:
+    cd {{BACKEND_DIR}} && uv sync --all-extras --dev
+    cd {{FRONTEND_DIR}} && {{FRONTEND_PACKAGE_MANAGER}} install
+    pre-commit install -c .pre-commit-config.yaml
+
 frontend-dev:
-    cd frontend && bun run dev
+    cd {{FRONTEND_DIR}} && {{FRONTEND_PACKAGE_MANAGER}} run dev
 
 backend-dev:
-    cd backend && uv run python manage.py runserver
+    cd {{BACKEND_DIR}} && uv run python manage.py runserver
+
 dev:
-    cd frontend && bun run dev & cd backend && uv run python manage.py runserver
-
-manage COMMAND:
-    cd backend && uv run python manage.py {{COMMAND}}
-
-test ARGS="":
-    cd backend && uv run pytest {{ARGS}}
+    cd {{FRONTEND_DIR}} && {{FRONTEND_PACKAGE_MANAGER}} run dev & cd {{BACKEND_DIR}} && uv run python manage.py runserver
 
 lint:
-    cd backend && uv run ruff check . --fix
-    cd frontend && bun run biome lint ./src --fix
-
-typecheck:
-    cd frontend && bun run typecheck
+    cd {{BACKEND_DIR}} && uv run ruff check . --fix
+    cd {{FRONTEND_DIR}} && {{FRONTEND_PACKAGE_MANAGER}} run lint:fix
 
 format:
-    cd backend && uv run ruff format --check .
-    cd frontend && bun run biome format ./src
+    cd {{BACKEND_DIR}} && uv run ruff format --check .
+    cd {{FRONTEND_DIR}} && {{FRONTEND_PACKAGE_MANAGER}} run format
+
+typecheck:
+    cd {{FRONTEND_DIR}} && {{FRONTEND_PACKAGE_MANAGER}} run typecheck
+
+manage COMMAND:
+    cd {{BACKEND_DIR}} && uv run python manage.py {{COMMAND}}
+
+test ARGS="":
+    cd {{BACKEND_DIR}} && uv run pytest {{ARGS}}
+
 
 generate-client:
     chmod +x scripts/generate-client.sh

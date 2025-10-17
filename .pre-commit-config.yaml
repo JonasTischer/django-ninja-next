@@ -1,33 +1,59 @@
-repos:
-  - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.6.8
-    hooks:
-      - id: uv-lock
+fail_fast: true
 
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+        exclude: >
+          (?x)^(
+              package-lock\.json
+          )$
+      - id: fix-byte-order-marker
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: debug-statements
+      - id: detect-private-key
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.12.3
+    rev: v0.14.0
     hooks:
       # Run the linter.
-      - id: ruff-check
-        args: [ --fix ]
+      - id: ruff
+        args: [--fix]
       # Run the formatter.
       - id: ruff-format
 
   - repo: local
     hooks:
-      # Frontend hooks
-      - id: local-biome-check
-        name: biome check
-        entry: bash -c "cd frontend && bun run lint:fix"
+      - id: frontend-lint
+        name: run frontend lint
+        entry: sh -c 'cd frontend && bun run lint'
         language: system
-        types: [text]
-        files: "\\.(jsx?|tsx?|c(js|ts)|m(js|ts)|d\\.(ts|cts|mts)|jsonc?)$"
-
-      - id: frontend-typecheck
-        name: frontend typecheck
-        entry: bash -c "cd frontend && bun run typecheck"
+        types: [ file ]
+        files: ^frontend/.*\.(js|jsx|ts|tsx)$
+        pass_filenames: true
+      - id: frontend format
+        name: Run format on frontend files
+        entry: sh -c 'cd frontend && bun run format'
         language: system
+        types: [ file ]
+        files: ^frontend/.*\.(js|jsx|ts|tsx)$
+        pass_filenames: true
+      - id: frontend typecheck
+        name: run frontend typecheck
+        entry: sh -c 'cd frontend && bun run typecheck'
+        language: system
+        types: [ file ]
+        files: ^frontend/.*\.(ts|tsx)$
         pass_filenames: false
-        types_or: [javascript, jsx, ts, tsx, json]
+      - id: generate-frontend-client
+        name: generate frontend client
+        entry: sh -c 'just generate-client'
+        language: system
+        # Only run frontend client generation if frontend files have changed:
+        files: openapi\.json$
+        pass_filenames: false

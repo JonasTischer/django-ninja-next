@@ -114,6 +114,206 @@ export const SocialAuthSchemaSchema = {
     type: 'object'
 } as const;
 
+export const PlanSchemaSchema = {
+    properties: {
+        id: {
+            title: 'Id',
+            type: 'integer'
+        },
+        name: {
+            title: 'Name',
+            type: 'string'
+        },
+        price: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'string'
+                }
+            ],
+            title: 'Price'
+        },
+        currency: {
+            title: 'Currency',
+            type: 'string'
+        },
+        description: {
+            title: 'Description',
+            type: 'string'
+        },
+        features: {
+            items: {
+                type: 'string'
+            },
+            title: 'Features',
+            type: 'array'
+        },
+        is_active: {
+            title: 'Is Active',
+            type: 'boolean'
+        }
+    },
+    required: ['id', 'name', 'price', 'currency', 'description', 'features', 'is_active'],
+    title: 'PlanSchema',
+    type: 'object'
+} as const;
+
+export const SubscriptionSchemaSchema = {
+    properties: {
+        id: {
+            title: 'Id',
+            type: 'integer'
+        },
+        plan: {
+            '$ref': '#/components/schemas/PlanSchema'
+        },
+        status: {
+            title: 'Status',
+            type: 'string'
+        },
+        current_period_start: {
+            format: 'date-time',
+            title: 'Current Period Start',
+            type: 'string'
+        },
+        current_period_end: {
+            format: 'date-time',
+            title: 'Current Period End',
+            type: 'string'
+        },
+        cancel_at_period_end: {
+            title: 'Cancel At Period End',
+            type: 'boolean'
+        }
+    },
+    required: ['id', 'plan', 'status', 'current_period_start', 'current_period_end', 'cancel_at_period_end'],
+    title: 'SubscriptionSchema',
+    type: 'object'
+} as const;
+
+export const UserSubscriptionSchemaSchema = {
+    properties: {
+        has_active_subscription: {
+            title: 'Has Active Subscription',
+            type: 'boolean'
+        },
+        subscription: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/SubscriptionSchema'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        plan_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Plan Name'
+        }
+    },
+    required: ['has_active_subscription'],
+    title: 'UserSubscriptionSchema',
+    type: 'object'
+} as const;
+
+export const CheckoutSessionResponseSchemaSchema = {
+    properties: {
+        session_id: {
+            title: 'Session Id',
+            type: 'string'
+        },
+        session_url: {
+            title: 'Session Url',
+            type: 'string'
+        }
+    },
+    required: ['session_id', 'session_url'],
+    title: 'CheckoutSessionResponseSchema',
+    type: 'object'
+} as const;
+
+export const CreateCheckoutSessionSchemaSchema = {
+    properties: {
+        plan_id: {
+            title: 'Plan Id',
+            type: 'integer'
+        },
+        success_url: {
+            title: 'Success Url',
+            type: 'string'
+        },
+        cancel_url: {
+            title: 'Cancel Url',
+            type: 'string'
+        }
+    },
+    required: ['plan_id', 'success_url', 'cancel_url'],
+    title: 'CreateCheckoutSessionSchema',
+    type: 'object'
+} as const;
+
+export const CancelSubscriptionResponseSchemaSchema = {
+    properties: {
+        success: {
+            title: 'Success',
+            type: 'boolean'
+        },
+        message: {
+            title: 'Message',
+            type: 'string'
+        }
+    },
+    required: ['success', 'message'],
+    title: 'CancelSubscriptionResponseSchema',
+    type: 'object'
+} as const;
+
+export const CancelSubscriptionSchemaSchema = {
+    properties: {
+        subscription_id: {
+            title: 'Subscription Id',
+            type: 'string'
+        }
+    },
+    required: ['subscription_id'],
+    title: 'CancelSubscriptionSchema',
+    type: 'object'
+} as const;
+
+export const CustomerPortalResponseSchemaSchema = {
+    properties: {
+        session_url: {
+            title: 'Session Url',
+            type: 'string'
+        }
+    },
+    required: ['session_url'],
+    title: 'CustomerPortalResponseSchema',
+    type: 'object'
+} as const;
+
+export const CustomerPortalSchemaSchema = {
+    properties: {
+        return_url: {
+            title: 'Return Url',
+            type: 'string'
+        }
+    },
+    required: ['return_url'],
+    title: 'CustomerPortalSchema',
+    type: 'object'
+} as const;
+
 export const TokenObtainPairOutputSchemaSchema = {
     properties: {
         email: {

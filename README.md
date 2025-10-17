@@ -27,74 +27,92 @@ This template combines Django 5 wfor the backend and Next.js 14 for the frontend
 
 ## Installation
 
+## Prerequisites
+- Python 3.12 with [uv](https://docs.astral.sh/uv/getting-started/installation/) installed
+- Node.js (>=20) and [bun](https://bun.com/docs/installation)
+- [just](https://just.systems/man/en/) command runner
+- Docker and Docker Compose (for local Postgres or running commands in containers)
+- [pre-commit](https://pre-commit.com/#install) for code quality checks
+
 Clone & create this repo locally with the following command:
 
 ```bash
 git clone https://github.com/JonasTischer/django-ninja-next-template.git
 cd django-ninja-next-template
 ```
-## Precommit Setup
-1. Install pre-commit hooks:
 
-   ```sh
-   pre-commit install
+## First-Time Setup
+1. Copy environment templates and adjust secrets as needed:
+   ```bash
+   cp backend/.env.example backend/.env
+   cp frontend/.env.local.example frontend/.env.local
+   ```
+2. Install backend and frontend dependencies:
+   ```bash
+   just setup
    ```
 
-### Backend Setup
+## Installing and Activating Pre-Commit Hooks¶
+To activate pre-commit hooks, run the following commands for each configuration file:
 
-1. Navigate to the backend directory:
+For the local configuration file:
 
-   ```sh
-   cd backend
+`pre-commit install -c .pre-commit-config.yaml`
+
+Running Pre-Commit Checks¶
+To manually run the pre-commit checks on all files, use:
+
+`pre-commit run --all-files -c .pre-commit-config.yaml`
+
+or
+
+`pre-commit run --all-files -c .pre-commit-config.docker.yaml``
+
+Updating Pre-Commit Hooks
+
+To update the hooks to their latest versions, run:
+
+`pre-commit autoupdate`
+
+
+## Daily Development Flow
+1. Launch the stack:
+   - `just start-backend` – FastAPI with hot reload (uv + uvicorn)
+   - `just start-frontend` – Next.js dev server (`pnpm` script)
+   - `just dev` – Convenience command that kicks off both (stop with `Ctrl+C`)
+2. Regenerate the typed API client whenever backend schemas or routes change:
+   ```bash
+   just generate-client
+   ```
+3. Keep the database schema up to date:
+   ```bash
+   just migrate                # Apply Alembic migrations locally
+   just create-migration MESSAGE="add scenarios table"   # Generate a new migration
    ```
 
-2. Install dependencies using uv:
+## Common Commands
+**Quality checks**
+- `just typecheck` – Next.js TypeScript project type checking
+- `just lint` – Ruff (Python) + ESLint (frontend) with autofix
+- `just format` – Format validation (no writes)
 
-   ```sh
-   uv sync
-   ```
+**Testing**
+- `just test` – Backend pytest followed by frontend unit tests
 
-3. Copy `.env` to `.env.local` and update the variables.
-
-4. Run migrations and start the Django server:
-   ```sh
-   just manage migrate
-   just backend-dev
-   ```
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-
-   ```sh
-   cd frontend
-   ```
-
-2. Install dependencies using Bun:
-
-   ```sh
-   bun install
-   ```
-
-3. Start the development server:
-   ```sh
-   bun run dev
-   ```
+Run `just --list` or `just help` for a full catalog of tasks and descriptions.
 
 ## Tech Stack + Features
 
 ### Backend (Django 5)
 
 - [Django](https://www.djangoproject.com/) – High-level Python web framework
-- [Django REST Framework](https://www.django-rest-framework.org/) – Powerful and flexible toolkit for building Web APIs
-- JWT Authentication – Secure, token-based user authentication
-- [Poetry](https://python-poetry.org/) – Dependency management and packaging made easy for Python
+- [Django Ninja](https://django-ninja.rest-framework.com/) – Fast, async-ready REST framework with automatic OpenAPI schema generation
 
-### Frontend (Next.js 14)
+### Frontend (Next.js 15)
 
-- [Next.js 14](https://nextjs.org/) – React framework for building performant apps with the best developer experience
+- [Next.js 15](https://nextjs.org/) – React framework for building performant apps with the best developer experience
 - [TypeScript](https://www.typescriptlang.org/) – Typed superset of JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework for rapid UI development
+- [Tailwind CSS v4](https://tailwindcss.com/) – Utility-first CSS framework for rapid UI development
 - [Shadcn UI](https://ui.shadcn.com/) – Re-usable components built using Radix UI and Tailwind CSS
 - [Tanstack Query](https://tanstack.com/query/latest) – Powerful asynchronous state management for TS/JS
 - [React Hook Form](https://react-hook-form.com/) – Performant, flexible and extensible forms with easy-to-use validation
